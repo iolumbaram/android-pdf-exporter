@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<paths>
-    <external-path
-        name="external_files"
-        path="."/>
-=======
+<!--<paths>-->
+<!--    <external-path-->
+<!--        name="external_files"-->
+<!--        path="."/>-->
 <!--<paths>-->
 <!--    <external-path-->
 <!--        name="external_files"-->
@@ -13,5 +11,4 @@
 
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <files-path name="pdfs" path="pdfs/"/>
->>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
 </paths>
