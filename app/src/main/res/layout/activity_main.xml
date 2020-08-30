@@ -35,12 +35,33 @@
 
     <Button
         android:id="@+id/btn_create_pdf"
+<<<<<<< HEAD
         android:layout_width="145dp"
         android:layout_height="34dp"
         android:layout_marginTop="168dp"
         android:layout_marginEnd="132dp"
+=======
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="104dp"
+        android:layout_marginEnd="128dp"
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
         android:text="Create PDF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+<<<<<<< HEAD
+=======
+    <EditText
+        android:id="@+id/tv_pdf"
+        android:layout_width="156dp"
+        android:layout_height="295dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="40dp"
+        android:lines="8"
+        android:singleLine="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_create_pdf" />
+
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
 </androidx.constraintlayout.widget.ConstraintLayout>

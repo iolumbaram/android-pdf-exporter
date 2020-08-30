@@ -30,7 +30,11 @@ public class PdfDocumentAdapter extends PrintDocumentAdapter {
         if(cancellationSignal.isCanceled())
             callback.onLayoutCancelled();
         else{
+<<<<<<< HEAD
             PrintDocumentInfo.Builder builder = new PrintDocumentInfo.Builder("file name");
+=======
+            PrintDocumentInfo.Builder builder = new PrintDocumentInfo.Builder("file name2");
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
             builder.setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
                     .setPageCount(PrintDocumentInfo.PAGE_COUNT_UNKNOWN)
                     .build();
@@ -72,8 +76,11 @@ public class PdfDocumentAdapter extends PrintDocumentAdapter {
             }catch(IOException ex){
                 Log.e("Error", ""+ex.getMessage());
             }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
         }
     }
 }

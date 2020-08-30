@@ -2,6 +2,11 @@ package com.example.exporttemplate;
 
 import android.Manifest;
 import android.content.Context;
+<<<<<<< HEAD
+=======
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
@@ -11,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+<<<<<<< HEAD
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -39,12 +45,25 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+=======
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import java.io.File;
+
+public class MainActivity extends AppCompatActivity {
+    private int STORAGE_PERMISSION_CODE = 1;
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
     Button btn_create_pdf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+<<<<<<< HEAD
 //        BottomNavigationView navView = findViewById(R.id.nav_view);
 //        // Passing each menu ID as a set of Ids because each
 //        // menu should be considered as top level destinations.
@@ -54,22 +73,72 @@ public class MainActivity extends AppCompatActivity {
 //        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 //        NavigationUI.setupWithNavController(navView, navController);
+=======
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
 
         btn_create_pdf = (Button) findViewById(R.id.btn_create_pdf);
 
         btn_create_pdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+<<<<<<< HEAD
                 Log.e("Error", "persmission ?");
                 CreatePDFFile(Common.getAppPath(MainActivity.this)+"test_pdf.pdf");
+=======
+                if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+                    Log.e("error", "???");
+                    CreatePDFFile(Common.getAppPath(MainActivity.this)+"test_pdf2.pdf");
+                }else{
+                    requestStoragePermission();
+                }
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
             }
         });
     }
 
+<<<<<<< HEAD
+=======
+    private void requestStoragePermission() {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            new AlertDialog.Builder(this)
+                    .setTitle("Permission Needed")
+                    .setMessage("hello")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+        }else{
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == STORAGE_PERMISSION_CODE){
+            if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
     private void CreatePDFFile(String path) {
         if(new File(path).exists())
             new File(path).delete();
 
+<<<<<<< HEAD
         try{
             Document document = new Document();
 
@@ -134,18 +203,31 @@ public class MainActivity extends AppCompatActivity {
         } catch (DocumentException e) {
             e.printStackTrace();
         }
+=======
+        MeetingMinuteTemplateA mm = new MeetingMinuteTemplateA(MainActivity.this, R.id.tv_pdf);
+        mm.Create(Common.getAppPath(MainActivity.this));
+
+        Toast.makeText(this, "DONE!", Toast.LENGTH_SHORT).show();
+
+        printPDF();
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
     }
 
     private void printPDF() {
         PrintManager printManager = (PrintManager)getSystemService(Context.PRINT_SERVICE);
         try{
+<<<<<<< HEAD
             PrintDocumentAdapter printDocumentAdapter = new PdfDocumentAdapter(MainActivity.this, Common.getAppPath(MainActivity.this)+"test_pdf.pdf");
+=======
+            PrintDocumentAdapter printDocumentAdapter = new PdfDocumentAdapter(MainActivity.this, Common.getAppPath(MainActivity.this)+"pdfsend.pdf");
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
             printManager.print("Document", printDocumentAdapter, new PrintAttributes.Builder().build());
 
         }catch(Exception e){
             Log.e("Error", ""+e.getMessage());
         }
     }
+<<<<<<< HEAD
 
 
     private void addNewItemWithLeftAndRight(Document document, String textLeft, String textRight, Font textLeftFont, Font textRightFont) throws DocumentException{
@@ -177,4 +259,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+=======
+>>>>>>> ed153e14023e7446a452108e1c25988fe57ec5fb
 }
