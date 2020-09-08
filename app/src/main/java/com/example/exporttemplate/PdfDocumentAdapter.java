@@ -28,18 +28,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class PdfDocumentAdapter extends PrintDocumentAdapter {
     Context context;
     String path;
-    SpannableStringBuilder speechToTextContent;
+    ArrayList<SpannableStringBuilder> speechToTextContent;
 
     private int pageHeight;
     private int pageWidth;
     public PdfDocument myPdfDocument;
-    public int totalpages = 4;
+    public int totalpages = 0;
 
-    public PdfDocumentAdapter(Context context, String path, SpannableStringBuilder speechToTextContent){
+    public PdfDocumentAdapter(Context context, String path, ArrayList<SpannableStringBuilder> speechToTextContent){
         this.context = context;
         this.path = path;
         this.speechToTextContent = speechToTextContent;
@@ -50,40 +51,63 @@ public class PdfDocumentAdapter extends PrintDocumentAdapter {
         pageHeight = newAttributes.getMediaSize().getHeightMils()/1000 * 72;
         pageWidth = newAttributes.getMediaSize().getWidthMils()/1000 * 72;
 
+        totalpages = speechToTextContent.size();
+
         if(cancellationSignal.isCanceled()){
             callback.onLayoutCancelled();
             return;
         }
 
-        if (totalpages > 0) {
-            PrintDocumentInfo.Builder builder = new PrintDocumentInfo.Builder("file name2");
-            builder.setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
-                    //.setPageCount(PrintDocumentInfo.PAGE_COUNT_UNKNOWN)
-                    .setPageCount(totalpages)
-                    .build();
-            callback.onLayoutFinished(builder.build(), !oldAttributes.equals(newAttributes));
-        }
+//        if (totalpages > 0) {
+//            PrintDocumentInfo.Builder builder = new PrintDocumentInfo.Builder("meetingMinutes");
+//            builder.setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+//                    //.setPageCount(PrintDocumentInfo.PAGE_COUNT_UNKNOWN)
+//                    .setPageCount(totalpages)
+//                    .build();
+//            callback.onLayoutFinished(builder.build(), !oldAttributes.equals(newAttributes));
+//        }
+
+        PrintDocumentInfo.Builder builder = new PrintDocumentInfo.Builder("meetingMinutes");
+        builder.setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+                //.setPageCount(PrintDocumentInfo.PAGE_COUNT_UNKNOWN)
+                .setPageCount(totalpages)
+                .build();
+        callback.onLayoutFinished(builder.build(), !oldAttributes.equals(newAttributes));
     }
 
     @Override
     public void onWrite(PageRange[] pages, ParcelFileDescriptor destination, CancellationSignal cancellationSignal, WriteResultCallback callback) {
         for (int i = 0; i < totalpages; i++) {
-            if (pageInRange(pages, i))
-            {
-                PdfDocument.PageInfo newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, i).create();
+            PdfDocument.PageInfo newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, i).create();
 
-                PdfDocument.Page page = myPdfDocument.startPage(newPage);
+            PdfDocument.Page page = myPdfDocument.startPage(newPage);
 
-                if (cancellationSignal.isCanceled()) {
-                    callback.onWriteCancelled();
-                    myPdfDocument.close();
-                    myPdfDocument = null;
-                    return;
-                }
-                //drawPage(page, i);
-                drawPage(page, speechToTextContent);
-                myPdfDocument.finishPage(page);
+            if (cancellationSignal.isCanceled()) {
+                callback.onWriteCancelled();
+                myPdfDocument.close();
+                myPdfDocument = null;
+                return;
             }
+            //drawPage(page, i);
+            drawPage(page, speechToTextContent.get(i));
+            myPdfDocument.finishPage(page);
+//            if (pageInRange(pages, i))
+//            {
+//                PdfDocument.PageInfo newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, i).create();
+//
+//                PdfDocument.Page page = myPdfDocument.startPage(newPage);
+//
+//                if (cancellationSignal.isCanceled()) {
+//                    callback.onWriteCancelled();
+//                    myPdfDocument.close();
+//                    myPdfDocument = null;
+//                    return;
+//                }
+//                //drawPage(page, i);
+//                Log.e("error", String.valueOf(speechToTextContent.get(i)));
+//                drawPage(page, speechToTextContent.get(i));
+//                myPdfDocument.finishPage(page);
+//            }
         }
 
         try {
@@ -100,8 +124,44 @@ public class PdfDocumentAdapter extends PrintDocumentAdapter {
         callback.onWriteFinished(pages);
     }
 
+//    public void onWrite(PageRange[] pages, ParcelFileDescriptor destination, CancellationSignal cancellationSignal, WriteResultCallback callback) {
+//        for (int i = 0; i < totalpages; i++) {
+//            if (pageInRange(pages, i))
+//            {
+//                PdfDocument.PageInfo newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, i).create();
+//
+//                PdfDocument.Page page = myPdfDocument.startPage(newPage);
+//
+//                if (cancellationSignal.isCanceled()) {
+//                    callback.onWriteCancelled();
+//                    myPdfDocument.close();
+//                    myPdfDocument = null;
+//                    return;
+//                }
+//                //drawPage(page, i);
+//                drawPage(page, speechToTextContent[i]);
+//                myPdfDocument.finishPage(page);
+//            }
+//        }
+//
+//        try {
+//            myPdfDocument.writeTo(new FileOutputStream(
+//                    destination.getFileDescriptor()));
+//        } catch (IOException e) {
+//            callback.onWriteFailed(e.toString());
+//            return;
+//        } finally {
+//            myPdfDocument.close();
+//            myPdfDocument = null;
+//        }
+//
+//        callback.onWriteFinished(pages);
+//    }
+
     private boolean pageInRange(PageRange[] pageRanges, int page)
     {
+        Log.e("error", String.valueOf(pageRanges.length));
+
         for (int i = 0; i<pageRanges.length; i++)
         {
             if ((page >= pageRanges[i].getStart()) &&  (page <= pageRanges[i].getEnd()))

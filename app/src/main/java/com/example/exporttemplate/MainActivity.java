@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
@@ -15,7 +16,9 @@ import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintDocumentInfo;
 import android.print.PrintManager;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -30,6 +33,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private int STORAGE_PERMISSION_CODE = 1;
@@ -54,11 +58,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void exportToPDF(SpannableStringBuilder speechToTextContent) {
+    private void exportToPDF(ArrayList<SpannableStringBuilder> speechToTextContent) {
         PrintManager printManager = (PrintManager)getSystemService(Context.PRINT_SERVICE);
         try{
             Toast.makeText(this, "Print Ready!", Toast.LENGTH_SHORT).show();
-
+            Log.e("error", "here");
             PrintAttributes attributes = new PrintAttributes.Builder()
                     .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
                     .setResolution(new PrintAttributes.Resolution("pdf", "pdf", 600, 600))
@@ -74,13 +78,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    String randomText = "He had done everything right. There had been no mistakes throughout the entire process. It had been perfection and he knew it without a doubt, but the results still stared back at him with the fact that he had lost.";
+    String randomText2 = "Her mom had warned her. She had been warned time and again, but she had refused to believe her. She had done everything right and she knew she would be rewarded for doing so with the promotion. So when the promotion was given to her main rival, it not only stung, it threw her belief system into disarray. It was her first big lesson in life, but not the last.";
+    String longText = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,";
+
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private SpannableStringBuilder createTemplateA(String path) {
+    private ArrayList<SpannableStringBuilder> createTemplateA(String path) {
         if(new File(path).exists())
             new File(path).delete();
 
         MeetingMinuteTemplateA mm = new MeetingMinuteTemplateA(MainActivity.this, R.id.tv_pdf, path);
-        return mm.Create();
+        return mm.Create(new String(longText));
     }
 
     private void requestStoragePermission() {
