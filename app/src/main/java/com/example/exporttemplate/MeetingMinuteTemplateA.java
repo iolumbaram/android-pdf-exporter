@@ -33,8 +33,7 @@ public class MeetingMinuteTemplateA {
     int height;
     int width;
 
-    int ssBuilderSpanSizeLimit = 100;
-    ArrayList<SpannableStringBuilder> templateContent = null;
+    private int maxPageLines = 27; //every 27th lines create a new page
 
     public MeetingMinuteTemplateA(Context context, int textViewId, String path){
         this.context = context;
@@ -45,62 +44,64 @@ public class MeetingMinuteTemplateA {
     public ArrayList<SpannableStringBuilder> Create(String speechToText){
         getDisplayMetrics();
 
-        templateContent = new ArrayList<SpannableStringBuilder>();
-        int len = createChuncks(speechToText).size();
-        SpannableStringBuilder ss = new SpannableStringBuilder(createChuncks(speechToText).get(0));
-        for(int i=1; i < len; i++){
-            ss.append(createChuncks(speechToText).get(i));
+        ArrayList<String> paras = splitToPara(speechToText);
+        if(paras.size() > 0)
+        {
+            ArrayList<SpannableStringBuilder> templateContent = new ArrayList<SpannableStringBuilder>();
+            SpannableStringBuilder ss = new SpannableStringBuilder();
 
-            if(i%27 == 0){ //tentative max no of lines in a page
-                Spanned formattedLine = SpannableString.valueOf(ss);
-                SpannableStringBuilder formattedPage = new SpannableStringBuilder();
+            int sumChunkLines = 0;
+            for(int i=0;i<paras.size();i++){
+                ArrayList<SpannableString> chunks = createChuncks(paras.get(i));
+                int len = chunks.size();
+                int chunkCursor = 0;
 
-                formattedPage.append(formattedLine);
-                templateContent.add(formattedPage);
+                while(chunkCursor < len && chunkCursor < maxPageLines){
+                    ss.append(chunks.get(chunkCursor));
+                    sumChunkLines++;
+                    chunkCursor ++;
+                }
 
-                ss.delete(0, ss.length()-1);
+                if(sumChunkLines >= maxPageLines){
+                    SpannableStringBuilder formattedPage = new SpannableStringBuilder();
+                    Spanned formattedLine = SpannableString.valueOf(ss);
+                    formattedPage.append(formattedLine);
+                    templateContent.add(formattedPage);
+
+                    ss.delete(0, ss.length());
+                    sumChunkLines = 0;
+                }
+
+                if(i == paras.size()-1 && chunkCursor <= maxPageLines){
+                    SpannableStringBuilder formattedPage = new SpannableStringBuilder();
+                    for(int j=chunkCursor; j<len; j++){
+                        ss.append(chunks.get(j));
+                    }
+                    Spanned formattedLine = SpannableString.valueOf(ss);
+                    formattedPage.append(formattedLine);
+                    templateContent.add(formattedPage);
+                }
             }
-
-            if(i == len -1){
-                Spanned formattedLine = SpannableString.valueOf(ss);
-                SpannableStringBuilder formattedPage = new SpannableStringBuilder();
-
-                formattedPage.append(formattedLine);
-                templateContent.add(formattedPage);
-
-                ss.delete(0, ss.length()-1);
-            }
+            return templateContent;
         }
-        return templateContent;
+        return null;
     }
 
-    private int maxParaLines = 10; //every 10th lines create a new page
+    private ArrayList<String> splitToPara(String text){
+        ArrayList<String> paras = new ArrayList<String>();
+        String[] splited = text.split("\\r?\\n");
 
-
-//    private ArrayList<SpannableString> createPage(SpannableString para){
-//        ArrayList<SpannableString> pages = new ArrayList<SpannableString>();
-//        String _para = para.toString();
-//        String page = "";
-//        String[] lines = _para.split("\n", -1);
-//
-//        for(int i=0; i<lines.length; i++){
-//            if(i%10 == 0){
-//                pages.add(page);
-//            }
-//
-//            page += lines[i];
-//
-//            if(i==lines.length-1)
-//                pages.add(page);
-//        }
-//        return pages;
-//    }
+        for(int i=0;i<splited.length;i++){
+            paras.add(splited[i]);
+        }
+        return paras;
+    }
 
     private int maxChunkLength = 43;
 
-    private ArrayList<SpannableString> createChuncks(String text){
+    private ArrayList<SpannableString> createChuncks(String para){
         ArrayList<SpannableString> chunks = new ArrayList<SpannableString>();
-        String[] splited = text.split("\\s+");
+        String[] splited = para.split("\\s+");
         String chunk = splited[0];
 
         chunks.add(addBulletLine("\r")); //first chuck has a bullet; subsequent chucks has a tab(whitespace) instead
@@ -257,50 +258,3 @@ public class MeetingMinuteTemplateA {
 
     }
 }
-
-//    private String createChunck(String text){
-//        String[] splited = text.split("\\s+");
-//        String _textChunk = splited[0];
-//
-//        for(int i=1;i<splited.length;i++){
-//            if(!check(_textChunk, splited[i])) {
-//                chunk += _textChunk+"\r\n";
-//                _textChunk = splited[i];
-//                continue;
-//            }
-//
-//            _textChunk += "\r" + splited[i];
-//
-//            if(i==splited.length-1)
-//                chunk += _textChunk+"\r\n";
-//        }
-//        return chunk;
-//    }
-
-//        meetingMinuteContentText = new SpannableStringBuilder();
-//
-//                meetingMinuteContentText.append(addTitle("title"));
-//
-//                meetingMinuteContentText.append(addHeader("header"));
-//                meetingMinuteContentText.append(addSubHeader("subHeader"));
-//
-//                meetingMinuteContentText.append(addBulletLine("point1"));
-//                meetingMinuteContentText.append(addBulletLine("point2"));
-//                meetingMinuteContentText.append(addBulletLine("point3"));
-//
-//                meetingMinuteContentText.append(addHeader("header"));
-//                meetingMinuteContentText.append(addSubHeader("subHeader"));
-//
-//                meetingMinuteContentText.append(addBulletLine("point1"));
-//                meetingMinuteContentText.append(addBulletLine("point2"));
-
-//        while(speechToText.length() > 0){
-//            meetingMinuteContentText.append(addBulletLine(createChuck("asd")));
-//            speechToText.substring(1);
-//        }
-//SpannableString para = addBulletLine(createChuncks(speechToText));
-
-//        SpannableStringBuilders = new SpannableStringBuilder[createPage(para.toString()).size()];
-
-//        meetingMinuteContentText.append(para);
-//        SpannableStringBuilders[0] = meetingMinuteContentText;
