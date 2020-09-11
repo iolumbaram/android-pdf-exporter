@@ -41,6 +41,9 @@ public class MeetingMinuteTemplateA {
         this.path = path;
     }
 
+    String title = "This is Title";
+    String header =  "This is header";
+
     public ArrayList<SpannableStringBuilder> Create(String speechToText){
         getDisplayMetrics();
 
@@ -49,6 +52,9 @@ public class MeetingMinuteTemplateA {
         {
             ArrayList<SpannableStringBuilder> templateContent = new ArrayList<SpannableStringBuilder>();
             SpannableStringBuilder ss = new SpannableStringBuilder();
+
+            ss.append(addTitle(title));
+            ss.append(addHeader(header));
 
             int sumChunkLines = 0;
             for(int i=0;i<paras.size();i++){
@@ -161,7 +167,7 @@ public class MeetingMinuteTemplateA {
         if (TextUtils.isEmpty(text)) {
             return null;
         }
-        int absoluteSizeSpan = 15;
+        int absoluteSizeSpan = 14;
 
         Date currentTime = Calendar.getInstance().getTime();
 
@@ -178,7 +184,7 @@ public class MeetingMinuteTemplateA {
         if (TextUtils.isEmpty(text)) {
             return null;
         }
-        int absoluteSizeSpan = 15;
+        int absoluteSizeSpan = 14;
 
         StyleSpan styleSpan = new StyleSpan(android.graphics.Typeface.BOLD);
 
