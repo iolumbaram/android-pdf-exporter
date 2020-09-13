@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.res.ResourcesCompat;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -174,6 +176,8 @@ public class PdfDocumentAdapter extends PrintDocumentAdapter {
         LinearLayout layout = new LinearLayout(context);
         TextView textView = new TextView(context);
         textView.setText(content);
+        Typeface font = Typeface.createFromAsset(context.getAssets(), "fonts/OpenSans-Light.ttf");
+        textView.setTypeface(font);
         layout.addView(textView);
         Canvas canvas = page.getCanvas();
         layout.measure(canvas.getWidth(), canvas.getHeight());
