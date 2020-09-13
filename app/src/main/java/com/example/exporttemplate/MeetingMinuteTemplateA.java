@@ -21,6 +21,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -41,8 +42,8 @@ public class MeetingMinuteTemplateA {
         this.path = path;
     }
 
-    String title = "This is Title";
-    String header =  "This is header";
+    String title = "Annual Board Meeting";
+    ArrayList<String> header =  new ArrayList<>(Arrays.asList("Wendy Writer, CEO", "Ronny Reader, CFO","Abby Author, CTO"));
 
     public ArrayList<SpannableStringBuilder> Create(String speechToText){
         getDisplayMetrics();
@@ -54,7 +55,10 @@ public class MeetingMinuteTemplateA {
             SpannableStringBuilder ss = new SpannableStringBuilder();
 
             ss.append(addTitle(title));
-            ss.append(addHeader(header));
+            ss.append(addLineBreaker(1));
+            ss.append(addAttendees(header));
+            ss.append(addLineBreaker(1));
+            ss.append(addHeader("Notes"));
 
             int sumChunkLines = 0;
             for(int i=0;i<paras.size();i++){
@@ -167,17 +171,55 @@ public class MeetingMinuteTemplateA {
         if (TextUtils.isEmpty(text)) {
             return null;
         }
+        SpannableStringBuilder sb = new SpannableStringBuilder();
         int absoluteSizeSpan = 14;
 
         Date currentTime = Calendar.getInstance().getTime();
 
-        SpannableString ss = new SpannableString(text+"\n"+currentTime+"\n");
-        ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString titleText = new SpannableString(text+"\n");
+        titleText.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, titleText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        sb.append(titleText);
+
+        SpannableString dateTimeText = new SpannableString(currentTime+"\n");
+        dateTimeText.setSpan(new AbsoluteSizeSpan(9, true), 0, dateTimeText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        sb.append(dateTimeText);
+
+        SpannableString seperator = new SpannableString("       \n");
         //ss.setSpan(new RelativeSizeSpan(2f),0,text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new UnderlineSpan(), 0, text.length(), 0);
+        seperator.setSpan(new UnderlineSpan(), 0, seperator.length(), 0);
+        sb.append(seperator);
 
 //        InSpanLimit(absoluteSizeSpan);
-        return ss;
+        return  SpannableString.valueOf(sb);
+    }
+
+    private SpannableString addAttendees(ArrayList<String> attendeesList){
+        if (attendeesList.isEmpty()) {
+            return null;
+        }
+        SpannableStringBuilder sb = new SpannableStringBuilder();
+        int absoluteSizeSpan = 14;
+
+        StyleSpan styleSpan = new StyleSpan(android.graphics.Typeface.BOLD);
+
+        String headerText = "Attendees";
+        SpannableString ss = new SpannableString(headerText+"\n");
+        ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, headerText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //ss.setSpan(new RelativeSizeSpan(3f),0,text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(styleSpan, 0, ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new ForegroundColorSpan(Color.RED), 0,  ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        sb.append(ss);
+
+        for(int i=0; i<attendeesList.size(); i++){
+            SpannableString attendee = new SpannableString(attendeesList.get(i) +"\n");
+            attendee.setSpan(new AbsoluteSizeSpan(8, true), 0, attendee.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            //ss.setSpan(new RelativeSizeSpan(3f),0,text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            attendee.setSpan(styleSpan, 0, attendee.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            sb.append(attendee);
+        }
+
+//        InSpanLimit(absoluteSizeSpan);
+        return  SpannableString.valueOf(sb);
     }
 
     private SpannableString addHeader(CharSequence text){
@@ -187,26 +229,11 @@ public class MeetingMinuteTemplateA {
         int absoluteSizeSpan = 14;
 
         StyleSpan styleSpan = new StyleSpan(android.graphics.Typeface.BOLD);
-
-        SpannableString ss = new SpannableString(text+"\n");
-        ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        //ss.setSpan(new RelativeSizeSpan(3f),0,text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(styleSpan, 0, ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new ForegroundColorSpan(Color.RED), 0,  ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-//        InSpanLimit(absoluteSizeSpan);
-        return ss;
-    }
-
-    private SpannableString addSubHeader(CharSequence text){
-        if (TextUtils.isEmpty(text)) {
-            return null;
-        }
-        int absoluteSizeSpan = 10;
-
         SpannableString ss = new SpannableString(text+"\n");
         //ss.setSpan(new RelativeSizeSpan(2f),0,text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(styleSpan, 0, ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new ForegroundColorSpan(Color.RED), 0,  ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 //        InSpanLimit(absoluteSizeSpan);
         return ss;
