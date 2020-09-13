@@ -228,6 +228,8 @@ public class MeetingMinuteTemplateA {
 
         SpannableString titleText = new SpannableString(text+"\n");
         titleText.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, titleText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        int brown = Color.parseColor("#695d46");
+        titleText.setSpan(new ForegroundColorSpan(brown), 0,  titleText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         sb.append(titleText);
 
         Date currentTime = Calendar.getInstance().getTime();
@@ -260,7 +262,8 @@ public class MeetingMinuteTemplateA {
         ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, headerText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         //ss.setSpan(new RelativeSizeSpan(3f),0,text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(styleSpan, 0, ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new ForegroundColorSpan(Color.RED), 0,  ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        int orange = Color.parseColor("#ff5e0e");
+        ss.setSpan(new ForegroundColorSpan(orange), 0,  ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         sb.append(ss);
 
         for(int i=0; i<attendeesList.size(); i++){
@@ -288,7 +291,8 @@ public class MeetingMinuteTemplateA {
         ss.setSpan(new LineHeightSetter(10), 0,text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(styleSpan, 0, ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new ForegroundColorSpan(Color.RED), 0,  ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        int orange = Color.parseColor("#ff5e0e");
+        ss.setSpan(new ForegroundColorSpan(orange), 0,  ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 //        InSpanLimit(absoluteSizeSpan);
         return ss;
