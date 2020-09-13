@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -13,6 +14,7 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
@@ -26,6 +28,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.example.exporttemplate.R.drawable.banner_test;
+
 @RequiresApi(api = Build.VERSION_CODES.O)
 
 public class MeetingMinuteTemplateA {
@@ -35,7 +39,7 @@ public class MeetingMinuteTemplateA {
     int height;
     int width;
 
-    private int maxPageLines = 18; //every 27th lines create a new page
+    private int maxPageLines = 13; //every 27th lines create a new page
 
     public MeetingMinuteTemplateA(Context context, int textViewId, String path){
         this.context = context;
@@ -59,8 +63,13 @@ public class MeetingMinuteTemplateA {
             ss.append(addLineBreaker(1));
             ss.append(addAttendees(header));
             ss.append(addLineBreaker(1));
-            ss.append(addHeader("Notes"));
+            SpannableStringBuilder fp = new SpannableStringBuilder();
+            Spanned fl = SpannableString.valueOf(ss);
+            fp.append(fl);
+            templateContent.add(fp);
+            ss.clear();
 
+            ss.append(addHeader("Notes"));
             int sumChunkLines = 0;
             for(int i=0;i<paras.size();i++){
                 ArrayList<SpannableString> chunks = createChuncks(paras.get(i));
@@ -68,10 +77,9 @@ public class MeetingMinuteTemplateA {
                 int chunkCursor = 0;
 
                 while(chunkCursor < len && chunkCursor < maxPageLines){
-
                     ss.append(chunks.get(chunkCursor));
                     sumChunkLines++;
-                    chunkCursor ++;
+                    chunkCursor++;
                 }
 
                 if(sumChunkLines >= maxPageLines){
@@ -81,17 +89,49 @@ public class MeetingMinuteTemplateA {
                     templateContent.add(formattedPage);
 
                     ss.delete(0, ss.length());
+
+                    int remaingLineCountCursor = chunkCursor;
+                    while(remaingLineCountCursor < len){
+                        ss.append(chunks.get(remaingLineCountCursor));
+                        remaingLineCountCursor++;
+                    }
+
                     sumChunkLines = 0;
                 }
 
                 if(i == paras.size()-1 && chunkCursor <= maxPageLines){
                     SpannableStringBuilder formattedPage = new SpannableStringBuilder();
-                    for(int j=chunkCursor; j<len; j++){
-                        ss.append(chunks.get(j));
+                    ss.delete(0, ss.length());
+
+                    int noResidualLines = len-chunkCursor;
+
+                    if(noResidualLines > maxPageLines){
+                        for(int j=chunkCursor; j<chunkCursor+maxPageLines; j++){
+                            ss.append(chunks.get(j));
+                        }
+                        Spanned formattedLine = SpannableString.valueOf(ss);
+                        formattedPage.append(formattedLine);
+                        templateContent.add(formattedPage);
+
+                        ss.delete(0, ss.length());
+
+                        for(int k=len-maxPageLines; k<len; k++){
+                            ss.append(chunks.get(k));
+                        }
+
+                        SpannableStringBuilder formattedPage2 = new SpannableStringBuilder();
+                        Spanned formattedLine2 = SpannableString.valueOf(ss);
+                        formattedPage2.append(SpannableString.valueOf(formattedLine2));
+                        templateContent.add(formattedPage2);
                     }
-                    Spanned formattedLine = SpannableString.valueOf(ss);
-                    formattedPage.append(formattedLine);
-                    templateContent.add(formattedPage);
+                    else{
+                        for(int j=chunkCursor; j<len; j++){
+                            ss.append(chunks.get(j));
+                        }
+                        Spanned formattedLine = SpannableString.valueOf(ss);
+                        formattedPage.append(formattedLine);
+                        templateContent.add(formattedPage);
+                    }
                 }
             }
             return templateContent;
@@ -176,12 +216,21 @@ public class MeetingMinuteTemplateA {
         SpannableStringBuilder sb = new SpannableStringBuilder();
         int absoluteSizeSpan = 14;
 
-        Date currentTime = Calendar.getInstance().getTime();
+        String imagePlaceHolder = "1";
+        SpannableString imageSS = new SpannableString(imagePlaceHolder);
+        Drawable d = context.getDrawable(banner_test);
+        d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+        ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BASELINE);
+        imageSS.setSpan(span, 0, imagePlaceHolder.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        sb.append(imageSS);
+
+        sb.append("\n");
 
         SpannableString titleText = new SpannableString(text+"\n");
         titleText.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, titleText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         sb.append(titleText);
 
+        Date currentTime = Calendar.getInstance().getTime();
         SpannableString dateTimeText = new SpannableString(currentTime+"\n");
         dateTimeText.setSpan(new AbsoluteSizeSpan(9, true), 0, dateTimeText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         sb.append(dateTimeText);
