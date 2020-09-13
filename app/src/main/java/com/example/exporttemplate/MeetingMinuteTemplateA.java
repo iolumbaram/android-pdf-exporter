@@ -16,9 +16,10 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+
+import com.example.exporttemplate.ui.LineHeightSetter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class MeetingMinuteTemplateA {
     int height;
     int width;
 
-    private int maxPageLines = 27; //every 27th lines create a new page
+    private int maxPageLines = 18; //every 27th lines create a new page
 
     public MeetingMinuteTemplateA(Context context, int textViewId, String path){
         this.context = context;
@@ -67,6 +68,7 @@ public class MeetingMinuteTemplateA {
                 int chunkCursor = 0;
 
                 while(chunkCursor < len && chunkCursor < maxPageLines){
+
                     ss.append(chunks.get(chunkCursor));
                     sumChunkLines++;
                     chunkCursor ++;
@@ -203,7 +205,9 @@ public class MeetingMinuteTemplateA {
         StyleSpan styleSpan = new StyleSpan(android.graphics.Typeface.BOLD);
 
         String headerText = "Attendees";
+
         SpannableString ss = new SpannableString(headerText+"\n");
+        ss.setSpan(new LineHeightSetter(20), 0, headerText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, headerText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         //ss.setSpan(new RelativeSizeSpan(3f),0,text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(styleSpan, 0, ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -212,6 +216,7 @@ public class MeetingMinuteTemplateA {
 
         for(int i=0; i<attendeesList.size(); i++){
             SpannableString attendee = new SpannableString(attendeesList.get(i) +"\n");
+            attendee.setSpan(new LineHeightSetter(10), 0,attendee.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             attendee.setSpan(new AbsoluteSizeSpan(8, true), 0, attendee.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             //ss.setSpan(new RelativeSizeSpan(3f),0,text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             attendee.setSpan(styleSpan, 0, attendee.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -231,6 +236,7 @@ public class MeetingMinuteTemplateA {
         StyleSpan styleSpan = new StyleSpan(android.graphics.Typeface.BOLD);
         SpannableString ss = new SpannableString(text+"\n");
         //ss.setSpan(new RelativeSizeSpan(2f),0,text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new LineHeightSetter(10), 0,text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(styleSpan, 0, ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new ForegroundColorSpan(Color.RED), 0,  ss.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -246,9 +252,9 @@ public class MeetingMinuteTemplateA {
         int absoluteSizeSpan = 8;
 
         SpannableString ss = new SpannableString(text);
+        ss.setSpan(new LineHeightSetter(10), 0,text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new BulletSpan(10), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
 //        InSpanLimit(absoluteSizeSpan);
         return ss;
     }
@@ -261,6 +267,7 @@ public class MeetingMinuteTemplateA {
         int absoluteSizeSpan = 8;
 
         SpannableString ss = new SpannableString("\r\r\r"+text);
+        ss.setSpan(new LineHeightSetter(10), 0,text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new AbsoluteSizeSpan(absoluteSizeSpan, true), 0, text.length()+3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 //        InSpanLimit(absoluteSizeSpan);
@@ -269,10 +276,12 @@ public class MeetingMinuteTemplateA {
 
     private StringBuilder addLineBreaker(int num){
         if(num <= 0) return null;
+        String space = "";
         StringBuilder s = new StringBuilder();
-        for(int i=0; i<=num;i++){
-            s.append("\n");
-        }
+        SpannableString ss = new SpannableString(space);
+        ss.setSpan(new LineHeightSetter(20), 0, space.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        s.append(ss);
+//        s.append("\n");
 
         return s;
     }
@@ -291,3 +300,4 @@ public class MeetingMinuteTemplateA {
 
     }
 }
+
